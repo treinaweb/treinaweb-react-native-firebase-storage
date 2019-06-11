@@ -4,10 +4,12 @@ import {Platform, StyleSheet, Text, SafeAreaView, ScrollView, Button} from 'reac
 import DirectoryList from './app/components/DirectoryList';
 import Breadcrumb from './app/components/Breadcrumb';
 import ImageList from './app/components/ImageList';
+import ImageDialog from './app/components/ImageDialog';
 
 export default class App extends Component {
 
   state = {
+    currentImage: {},
     currentDirectory: {
       name: 'pasta 3',
       parent: {
@@ -42,7 +44,22 @@ export default class App extends Component {
       {name: 'pasta 1'},
       {name: 'pasta 2'},
       {name: 'pasta 3'}
-    ]
+    ],
+    isDialogOpen: false
+  }
+
+  onSelectImage = (image) => {
+    this.setState({
+      isDialogOpen: true,
+      currentImage: image
+    })
+  }
+
+  onCloseDialog = () => {
+    this.setState({
+      isDialogOpen: false,
+      currentImage: {}
+    })
   }
 
   render() {
@@ -54,10 +71,12 @@ export default class App extends Component {
 
         <ScrollView style={styles.scrollView} >
           <DirectoryList directories={state.directoryList} />
-          <ImageList images={state.imageList} />
+          <ImageList images={state.imageList} onSelect={this.onSelectImage} />
         </ScrollView>
 
         <Button title="Add" />
+
+        <ImageDialog image={state.currentImage} isOpen={state.isDialogOpen} onClose={this.onCloseDialog} />
         
       </SafeAreaView>
     );
