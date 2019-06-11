@@ -32,7 +32,8 @@ export const FirebaseStorage = {
                 title: 'Select a picture'
             }, async (response) => {
                 if(response.uri){
-                    
+                    const blob = await (await fetch('file://'+response.path)).blob();
+                    currentStorageRef.child(response.fileName).put(blob, {contentType: response.type})
                     resolve(currentStorageRef);
                 }else{
                     reject();
