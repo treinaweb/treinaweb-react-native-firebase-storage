@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, SafeAreaView, ScrollView, Button} from 'react-native';
 
+import {FirebaseStorage} from './app/services/FirebaseStorage';
 import DirectoryList from './app/components/DirectoryList';
 import Breadcrumb from './app/components/Breadcrumb';
 import ImageList from './app/components/ImageList';
