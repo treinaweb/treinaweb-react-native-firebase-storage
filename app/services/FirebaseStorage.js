@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import ImagePicker from 'react-native-image-picker';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDeHYbNJmSnA5fYdwDTQmKA_6GnouEXSIE",
@@ -24,6 +25,20 @@ export const FirebaseStorage = {
             imageList = result.items.map((item, index) => Object.assign(item, {uri: imageUrlList[index]}));
 
         return {imageList, directoryList, currentDirectory: currentStorageRef};
+    },
+    async uploadImage(currentStorageRef = storageRef){
+        return new Promise((resolve, reject) => {
+            ImagePicker.showImagePicker({
+                title: 'Select a picture'
+            }, async (response) => {
+                if(response.uri){
+                    
+                    resolve(currentStorageRef);
+                }else{
+                    reject();
+                }
+            })
+        })
     },
     async removeImage(imageRef){
         return imageRef.delete();

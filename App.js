@@ -57,6 +57,12 @@ export default class App extends Component {
     this.onCloseDialog();
   }
 
+  addImage = async () => {
+    await FirebaseStorage.uploadImage(this.state.currentDirectory);
+    this.onRefresh();
+    this.onCloseDialog();
+  }
+
   render() {
     const {state} = this;
     
@@ -75,7 +81,7 @@ export default class App extends Component {
           <ImageList images={state.imageList} onSelect={this.onSelectImage} />
         </ScrollView>
 
-        <Button title="Add" />
+        <Button title="Add" onPress={this.addImage} />
 
         <ImageDialog image={state.currentImage} isOpen={state.isDialogOpen} onClose={this.onCloseDialog} onRemove={this.removeImage} />
         
