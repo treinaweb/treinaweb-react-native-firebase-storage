@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, SafeAreaView, ScrollView, Button} from 'react-native';
+import {Platform, StyleSheet, Text, SafeAreaView, ScrollView, Button, RefreshControl} from 'react-native';
 
 import {FirebaseStorage} from './app/services/FirebaseStorage';
 import DirectoryList from './app/components/DirectoryList';
@@ -33,6 +33,10 @@ export default class App extends Component {
     }
   }
 
+  onRefresh = () => {
+    this.listContent(this.state.currentDirectory);
+  }
+
   onSelectImage = (image) => {
     this.setState({
       isDialogOpen: true,
@@ -46,6 +50,12 @@ export default class App extends Component {
       currentImage: {}
     })
   }
+  
+  removeImage = async (image) => {
+    await FirebaseStorage.removeImage(image);
+    this.onRefresh();
+    this.onCloseDialog();
+  }
 
   render() {
     const {state} = this;
@@ -54,14 +64,20 @@ export default class App extends Component {
       <SafeAreaView style={styles.container}>
         <Breadcrumb onSelect={this.listContent} directory={state.currentDirectory} />
 
-        <ScrollView style={styles.scrollView} >
+        <ScrollView 
+          style={styles.scrollView}
+          refreshControl={<RefreshControl
+              refreshing={state.isLoading}
+              onRefresh={this.onRefresh}
+            />}
+          >
           <DirectoryList onSelect={this.listContent} directories={state.directoryList} />
           <ImageList images={state.imageList} onSelect={this.onSelectImage} />
         </ScrollView>
 
         <Button title="Add" />
 
-        <ImageDialog image={state.currentImage} isOpen={state.isDialogOpen} onClose={this.onCloseDialog} />
+        <ImageDialog image={state.currentImage} isOpen={state.isDialogOpen} onClose={this.onCloseDialog} onRemove={this.removeImage} />
         
       </SafeAreaView>
     );

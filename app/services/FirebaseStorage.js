@@ -24,5 +24,8 @@ export const FirebaseStorage = {
             imageList = result.items.map((item, index) => Object.assign(item, {uri: imageUrlList[index]}));
 
         return {imageList, directoryList, currentDirectory: currentStorageRef};
+    },
+    async removeImage(imageRef){
+        return imageRef.delete();
     }
 }
