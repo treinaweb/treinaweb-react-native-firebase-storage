@@ -13,7 +13,7 @@ export default class ImageList extends Component{
             <View style={styles.imageContainer} >
                 {props.images.map((image, index) => {
                     return (
-                        <TouchableHighlight key={index} onPress={() => props.onSelect(image)}>
+                        <TouchableHighlight key={image.uri} onPress={() => props.onSelect(image)}>
                             <Image style={styles.image} source={{uri: image.uri}} />
                         </TouchableHighlight>
                     )

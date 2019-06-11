@@ -12,6 +12,17 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+const storage = firebase.storage(),
+  storageRef = storage.ref('/');
+
+
 export const FirebaseStorage = {
-    
+    async listAll(currentStorageRef = storageRef){
+        const result = await currentStorageRef.listAll(),
+            directoryList = result.prefixes,
+            imageUrlList = await Promise.all(result.items.map(item => item.getDownloadURL())),
+            imageList = result.items.map((item, index) => Object.assign(item, {uri: imageUrlList[index]}));
+
+        return {imageList, directoryList, currentDirectory: currentStorageRef};
+    }
 }

@@ -10,43 +10,27 @@ import ImageDialog from './app/components/ImageDialog';
 export default class App extends Component {
 
   state = {
+    isLoading: false,
     currentImage: {},
-    currentDirectory: {
-      name: 'pasta 3',
-      parent: {
-        name: 'pasta 2',
-        parent: {
-          name: 'pasta 1',
-          parent: {
-
-          }
-        }
-      }
-    },
-    imageList: [
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-      {uri: 'https://hips.hearstapps.com/clv.h-cdn.co/assets/cm/15/10/1024x1321/54f0f1d749d57_-_clx0704cover_1.jpg'},
-    ],
-    directoryList: [
-      {name: 'pasta 1'},
-      {name: 'pasta 2'},
-      {name: 'pasta 3'}
-    ],
+    currentDirectory: {},
+    imageList: [],
+    directoryList: [],
     isDialogOpen: false
+  }
+
+  componentDidMount(){
+    this.listContent();
+  }
+
+  listContent = async (directory) => {
+    try{
+      this.setState({isLoading: true});
+      const {imageList, directoryList, currentDirectory} = await FirebaseStorage.listAll(directory);
+      this.setState({imageList, directoryList, currentDirectory, isLoading: false});
+      return {imageList, directoryList, currentDirectory}
+    }catch(error){
+      console.log('error', error);
+    }
   }
 
   onSelectImage = (image) => {
@@ -68,10 +52,10 @@ export default class App extends Component {
     
     return (
       <SafeAreaView style={styles.container}>
-        <Breadcrumb directory={state.currentDirectory} />
+        <Breadcrumb onSelect={this.listContent} directory={state.currentDirectory} />
 
         <ScrollView style={styles.scrollView} >
-          <DirectoryList directories={state.directoryList} />
+          <DirectoryList onSelect={this.listContent} directories={state.directoryList} />
           <ImageList images={state.imageList} onSelect={this.onSelectImage} />
         </ScrollView>
 
