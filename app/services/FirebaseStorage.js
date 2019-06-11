@@ -1,5 +1,7 @@
+import {CameraRoll} from 'react-native';
 import firebase from 'firebase';
 import ImagePicker from 'react-native-image-picker';
+import fs from 'react-native-fs';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDeHYbNJmSnA5fYdwDTQmKA_6GnouEXSIE",
@@ -25,6 +27,16 @@ export const FirebaseStorage = {
             imageList = result.items.map((item, index) => Object.assign(item, {uri: imageUrlList[index]}));
 
         return {imageList, directoryList, currentDirectory: currentStorageRef};
+    },
+    async downloadImage(imageRef){
+        const fileName = `${fs.DocumentDirectoryPath}/${imageRef.name}`
+        result = fs.downloadFile({
+            fromUrl: imageRef.uri,
+            toFile: fileName
+        });
+        await result.promise;
+        await CameraRoll.saveToCameraRoll(`file://${fileName}`, 'photo');
+        return fileName;
     },
     async uploadImage(currentStorageRef = storageRef){
         return new Promise((resolve, reject) => {

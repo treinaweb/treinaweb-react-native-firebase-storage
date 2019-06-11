@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Image} from 'react-native';
 import Dialog from "react-native-dialog";
 
+import {FirebaseStorage} from '../services/FirebaseStorage';
+
 export default class ImageDialog extends Component{
     static defaultProps = {
         isOpen: false,
@@ -22,7 +24,9 @@ export default class ImageDialog extends Component{
         this.props.onRemove(this.props.image);
     }
 
-    download = () => {}
+    download = () => {
+        FirebaseStorage.downloadImage(this.props.image);
+    }
 
     render(){
         const {isOpen, image, onClose} = this.props;
